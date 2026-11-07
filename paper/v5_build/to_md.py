@@ -3,7 +3,7 @@ from pathlib import Path
 
 HERE = Path(__file__).parent
 src = (HERE / "冬至理论_v5.src.txt").read_text(encoding="utf-8").splitlines()
-out = ["# 冬至理论（第五版）", "", "一个关于市场冷热循环的十二阶段模型", "", "洛辰justin　二〇二六年十一月", ""]
+out = ["# 冬至理论", "", "一个关于市场冷热循环的十二阶段模型", "", "JustinTang洛辰　二〇二六年十一月", ""]
 mode, buf = None, []
 for line in src:
     line = line.rstrip()
@@ -50,5 +50,5 @@ for line in src:
         out += [line.split(" ", 1)[1], ""]
     else:
         out += [line, ""]
-(HERE.parent / "冬至理论_v5.md").write_text("\n".join(out), encoding="utf-8")
+(HERE.parent / "冬至理论.md").write_text("\n".join(out), encoding="utf-8")
 print("ok")

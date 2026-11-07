@@ -101,14 +101,12 @@ out.push(
     children: [new TextRun({ text: "冬至理论", font: HEI, size: 64, color: C.blue })] }),
   new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 80 },
     children: [new TextRun({ text: "——一个关于市场冷热循环的十二阶段模型", font: BODY, size: 27, color: C.ink })] }),
-  new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 80 },
-    children: [new TextRun({ text: "第五版", font: HEI, size: 24, color: C.gold })] }),
   new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 300 },
     children: [new TextRun({ text: "市场只有一个方向：做对", font: HEI, size: 21, color: C.gray })] }),
   new Paragraph({ alignment: AlignmentType.CENTER, children: [new ImageRun({ type: "png", data: cover.data,
     transformation: { width: 330, height: Math.round(330 * cover.h / cover.w) } })] }),
   new Paragraph({ alignment: AlignmentType.CENTER, spacing: { before: 500, after: 80 },
-    children: [new TextRun({ text: "洛辰justin", font: BODY, size: 27, color: C.ink })] }),
+    children: [new TextRun({ text: "JustinTang洛辰", font: BODY, size: 27, color: C.ink })] }),
   new Paragraph({ alignment: AlignmentType.CENTER,
     children: [new TextRun({ text: "二〇二六年十一月", font: BODY, size: 19, color: C.gray })] }),
   new Paragraph({ children: [new PageBreak()] }),
@@ -153,9 +151,9 @@ for (const raw of SRC) {
       new Paragraph({ alignment: AlignmentType.CENTER, spacing: { before: 400, after: 120 },
         children: [new TextRun({ text: "冬至理论", font: HEI, size: 40, color: C.blue })] }),
       new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 80 },
-        children: [new TextRun({ text: "一个关于市场冷热循环的十二阶段模型（第五版）", font: HEI, size: 26, color: C.blue })] }),
+        children: [new TextRun({ text: "一个关于市场冷热循环的十二阶段模型", font: HEI, size: 26, color: C.blue })] }),
       new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 360 },
-        children: [new TextRun({ text: "洛辰justin", font: BODY, size: 21, color: C.gray })] }));
+        children: [new TextRun({ text: "JustinTang洛辰", font: BODY, size: 21, color: C.gray })] }));
   } else if (["@box", "@scene", "@quote", "@table"].includes(line)) {
     mode = line.slice(1);
   } else if (line.startsWith("@keywords ")) {
@@ -207,7 +205,7 @@ for (const raw of SRC) {
 }
 
 const doc = new Document({
-  creator: "洛辰justin", title: "冬至理论（第五版）",
+  creator: "JustinTang洛辰", title: "冬至理论",
   styles: { default: { document: { run: { font: BODY, size: 23, color: C.ink } } },
     paragraphStyles: [
       { id: "Heading1", name: "Heading 1", basedOn: "Normal", next: "Normal", quickFormat: true,
@@ -227,7 +225,7 @@ const doc = new Document({
 });
 
 Packer.toBuffer(doc).then(b => {
-  const f = path.join(PAPER, "冬至理论_v5.docx");
+  const f = path.join(PAPER, "冬至理论.docx");
   fs.writeFileSync(f, b);
   console.log("written", f, b.length);
 });
