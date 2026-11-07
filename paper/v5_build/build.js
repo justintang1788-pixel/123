@@ -4,6 +4,7 @@ const path = require("path");
 const {
   Document, Packer, Paragraph, TextRun, ImageRun, Table, TableRow, TableCell, AlignmentType,
   BorderStyle, ShadingType, WidthType, Footer, PageNumber, LevelFormat, HeadingLevel, PageBreak,
+  HorizontalPositionRelativeFrom, VerticalPositionRelativeFrom, TextWrappingType,
 } = require("docx");
 
 const HERE = __dirname;
@@ -40,10 +41,10 @@ function pngSize(file) {
   return { w: b.readUInt32BE(16), h: b.readUInt32BE(20), data: b };
 }
 
-function figure(num, file, title, note) {
+function figure(num, file, title, note, want) {
   const f = path.resolve(PAPER, file);
   const { w, h, data } = pngSize(f);
-  const width = Math.round(Math.min(560, 680 * w / h));
+  const width = want ? Number(want) : Math.round(Math.min(560, 680 * w / h));
   const out = [
     new Paragraph({ alignment: AlignmentType.CENTER, spacing: { before: 160, after: 60 }, keepNext: true,
       children: [new ImageRun({ type: "png", data, transformation: { width, height: Math.round(width * h / w) } })] }),
@@ -91,12 +92,14 @@ function table(rows) {
 const out = [];
 const tone = { color: C.red, bg: C.warmBg };
 
-// 封面：一整张海报
+// 封面：整页铺满的海报（浮在页面最底层，不留白边）
 const cover = pngSize(path.join(PAPER, "images_v5", "封面.png"));
 out.push(
-  new Paragraph({ alignment: AlignmentType.CENTER, spacing: { before: 0, after: 0 },
-    children: [new ImageRun({ type: "png", data: cover.data,
-      transformation: { width: 580, height: Math.round(580 * cover.h / cover.w) } })] }),
+  new Paragraph({ spacing: { before: 0, after: 0 }, children: [new ImageRun({ type: "png", data: cover.data,
+    transformation: { width: 794, height: 1123 },
+    floating: { horizontalPosition: { relative: HorizontalPositionRelativeFrom.PAGE, offset: 0 },
+                verticalPosition: { relative: VerticalPositionRelativeFrom.PAGE, offset: 0 },
+                behindDocument: true, allowOverlap: true, wrap: { type: TextWrappingType.NONE } } })] }),
   new Paragraph({ children: [new PageBreak()] }),
 );
 
@@ -153,8 +156,8 @@ for (const raw of SRC) {
   } else if (line.startsWith("## ")) {
     out.push(h2(line.slice(3)));
   } else if (line.startsWith("@fig ")) {
-    const [num, file, title, note] = line.slice(5).split("|");
-    out.push(...figure(num, file, title, note));
+    const [num, file, title, note, want] = line.slice(5).split("|");
+    out.push(...figure(num, file, title, note, want));
   } else if (line.startsWith("@stage ")) {
     const [num, name, sub, t] = line.slice(7).split("|");
     Object.assign(tone, t === "warm" ? { color: C.red, bg: C.warmBg } : { color: C.blue, bg: C.coolBg });
