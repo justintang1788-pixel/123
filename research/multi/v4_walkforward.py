@@ -21,6 +21,11 @@ RISKS = [0.05, 0.10]
 DEFAULT = (0.30, 40, 1.5)
 STAGE = ["等", "绝望", "怀疑", "犹豫", "大众共识", "泡沫", "兑现", "到目标后空仓"]
 BATCHES = [("multi", 1), ("multi2", 2), ("multi3", 3)]
+# 数据错误的修正（跑完第一遍、翻逐笔记录时发现，见 notes/11 第二部分）：
+#   纤维板 2019-12-03 换成新合约，计价单位从“元/张”变成“元/立方米”，价格从 85 跳到 1409，之前的数据和之后不是一个东西；
+#   玉米淀粉 2017-05-25 有一天收盘价是 7 元（前后都是 1900 多），是坏数据；
+#   沪锡 2015-03-27 第一天的价格是 16025（第二天起都是 11 万多），是坏数据。
+DATA_FIX = {"FB0": {"start": "2019-12-03"}, "CS0": {"drop": ["2017-05-25"]}, "SN0": {"drop": ["2015-03-27"]}}
 
 
 def group_of(code):
@@ -41,6 +46,11 @@ def load_all():
             continue
         for _, r in pd.read_csv(p).iterrows():
             d = pd.read_csv(ROOT / "data" / sub / f"{r['代码']}.csv", parse_dates=["date"]).set_index("date").sort_index()
+            fix = DATA_FIX.get(r["代码"], {})
+            if "start" in fix:
+                d = d[d.index >= fix["start"]]
+            if "drop" in fix:
+                d = d.drop(pd.to_datetime(fix["drop"]), errors="ignore")
             d = d[(d["close"] > 0) & d["volume"].notna()]
             w = pd.DataFrame({"open": d["open"].resample("W-FRI").first(), "high": d["high"].resample("W-FRI").max(),
                               "low": d["low"].resample("W-FRI").min(), "close": d["close"].resample("W-FRI").last(),
@@ -201,7 +211,7 @@ def fmt_param(m, v):
 
 
 def main():
-    t0 = time.time()
+    T0 = time.time()
     logf = open(OUT / "run.log", "w", encoding="utf-8")
 
     def say(*a):
@@ -215,7 +225,7 @@ def main():
         dict(meta["批次"].value_counts().sort_index()), dict(meta["大类"].value_counts()))
     with Pool(4) as pool:
         res = dict(pool.map(_worker, list(inst.items()), chunksize=1))
-    say(f"所有做法、所有参数算完，用时 {time.time() - t0:.0f} 秒")
+    say(f"所有做法、所有参数算完，用时 {time.time() - T0:.0f} 秒")
     methods = list(next(iter(res.values())).keys())
     days = {n: ((w.index - pd.Timestamp("1990-01-01")).days).values for n, w in inst.items()}
     idx = {n: w.index for n, w in inst.items()}
@@ -242,7 +252,7 @@ def main():
                             chosen_own.setdefault((n, y), {})[v] = s
             score = {v: (np.nanmedian(x) if len(x) else -np.inf) for v, x in per_v.items()}
             chosen[m][y] = max(score, key=score.get)
-    say(f"挑参数完成，用时 {time.time() - t0:.0f} 秒")
+    say(f"挑参数完成，用时 {time.time() - T0:.0f} 秒")
 
     # 按圈挑参数：每个标的只看自己过去
     methods_all = methods + ["第四版·按圈挑参数"]
@@ -471,7 +481,7 @@ def main():
                                    g.loc[k, "平常涨的比例"], alternative="greater").pvalue for k in g.index]
         say(f"\n=== 信号之后半年涨没涨（{label}，默认参数，全部历史） ===")
         say(g.round(3).to_string())
-    say(f"\n全部完成，用时 {time.time() - t0:.0f} 秒")
+    say(f"\n全部完成，用时 {time.time() - T0:.0f} 秒")
 
 
 if __name__ == "__main__":

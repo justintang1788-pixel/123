@@ -74,15 +74,15 @@ def main():
 
     path = OUT / "第四版回测记录.xlsx"
     with pd.ExcelWriter(path, engine="openpyxl") as xw:
-        pd.DataFrame(NOTE, columns=["项目", "说明"]).to_excel(xw, "说明", index=False)
-        summ.to_excel(xw, "汇总", index=False)
-        ports.to_excel(xw, "汇总", index=False, startrow=len(summ) + 3)
-        T.to_excel(xw, "每个标的", index=False)
-        TR.to_excel(xw, "每笔交易", index=False)
-        WL.to_excel(xw, "每周记录", index=False)
-        C.to_excel(xw, "每年参数", index=False)
-        yr.reset_index().to_excel(xw, "每年收益", index=False)
-        S.to_excel(xw, "信号", index=False)
+        pd.DataFrame(NOTE, columns=["项目", "说明"]).to_excel(xw, sheet_name="说明", index=False)
+        summ.to_excel(xw, sheet_name="汇总", index=False)
+        ports.to_excel(xw, sheet_name="汇总", index=False, startrow=len(summ) + 3)
+        T.to_excel(xw, sheet_name="每个标的", index=False)
+        TR.to_excel(xw, sheet_name="每笔交易", index=False)
+        WL.to_excel(xw, sheet_name="每周记录", index=False)
+        C.to_excel(xw, sheet_name="每年参数", index=False)
+        yr.reset_index().to_excel(xw, sheet_name="每年收益", index=False)
+        S.to_excel(xw, sheet_name="信号", index=False)
         wb = xw.book
         head = PatternFill("solid", fgColor="2E4A72")
         for ws in wb.worksheets:
