@@ -86,9 +86,13 @@ def market_q_events():
 
 
 def load_daily(path, code=None):
+    """数据修正（跑结果之前发现，见 notes/12 第二部分）：
+    沪锡第一天价格是坏数据；燃料油 2014–2018 年几乎没人交易（15个月成交量为0），2018-07-16 新合约上市后才用。"""
     d = pd.read_csv(path, parse_dates=["date"]).set_index("date").sort_index()
     if code == "SN0":
         d = d.drop(pd.to_datetime(["2015-03-27"]), errors="ignore")
+    if code == "FU0":
+        d = d[d.index >= "2018-07-16"]
     return d[(d["close"] > 0)]
 
 
@@ -160,7 +164,7 @@ def forces(u, cutoff):
     c = mp["close"]
     # 时机
     ma10 = c.rolling(10, min_periods=10).mean()
-    vol = mp["volume"]
+    vol = mp["volume"].where(mp["volume"] > 0)
     T = pd.DataFrame({"离均线": zexp(c / ma10 - 1, 36), "6个月涨跌": zexp(np.log(c).diff(6), 36),
                       "成交量": zexp(np.log(vol.rolling(3, min_periods=3).mean() / vol.rolling(12, min_periods=12).mean()), 36)})
     # 条件、取舍
@@ -182,7 +186,7 @@ def forces(u, cutoff):
     if u["Qkind"] == "series":
         Q = pd.DataFrame({k: zexp(asof_monthly(ev[ev.index <= cutoff], months), 36) for k, ev in u["Q"].items()})
     elif u["Qkind"] == "hold":
-        h = mp["hold"]
+        h = mp["hold"].where(mp["hold"] > 0)
         Q = pd.DataFrame({"持仓量": zexp(np.log(h.rolling(3, min_periods=3).mean() / h.rolling(24, min_periods=24).mean()), 36)})
     else:
         cols = {}
