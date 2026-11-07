@@ -36,6 +36,8 @@ REPORTS = {
     "money_supply": ("RPT_ECONOMY_CURRENCY_SUPPLY", "REPORT_DATE", "ALL", "月频：M0/M1/M2"),
     "pmi": ("RPT_ECONOMY_PMI", "REPORT_DATE", "ALL", "月频：PMI"),
     "rmb_loan": ("RPT_ECONOMY_RMB_LOAN", "REPORT_DATE", "ALL", "月频：新增人民币贷款"),
+    "rrr": ("RPT_ECONOMY_DEPOSIT_RESERVE", "REPORT_DATE", "ALL",
+            "逐条：存款准备金率调整（公布日、次日上证/深证涨跌）"),
 }
 
 
