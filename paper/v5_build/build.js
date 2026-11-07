@@ -10,8 +10,8 @@ const HERE = __dirname;
 const PAPER = path.resolve(HERE, "..");
 const SRC = fs.readFileSync(path.join(HERE, "冬至理论_v5.src.txt"), "utf8").split(/\r?\n/);
 
-const C = { ink: "2B2B2B", red: "A3432F", blue: "2E4A72", gold: "B08D57", gray: "7A7A7A",
-  warmBg: "FBF1E8", coolBg: "EEF2F8", boxBg: "F7F2E8", head: "EEF2F8", line: "C9CED6" };
+const C = { ink: "2B2B2B", red: "B06A1A", blue: "1D2F4A", gold: "C8962F", gray: "7A7A7A",
+  warmBg: "FBF3E6", coolBg: "EEF2F8", boxBg: "F8F3E8", head: "EEF2F8", line: "C9CED6" };
 const BODY = { ascii: "Times New Roman", hAnsi: "Times New Roman", eastAsia: "宋体" };
 const HEI = { ascii: "Arial", hAnsi: "Arial", eastAsia: "黑体" };
 const W = 8732; // 正文宽度（twips）
@@ -43,8 +43,7 @@ function pngSize(file) {
 function figure(num, file, title, note) {
   const f = path.resolve(PAPER, file);
   const { w, h, data } = pngSize(f);
-  const wide = w / h > 1.25;
-  const width = wide ? 560 : 380;
+  const width = Math.round(Math.min(560, 680 * w / h));
   const out = [
     new Paragraph({ alignment: AlignmentType.CENTER, spacing: { before: 160, after: 60 }, keepNext: true,
       children: [new ImageRun({ type: "png", data, transformation: { width, height: Math.round(width * h / w) } })] }),
@@ -92,23 +91,12 @@ function table(rows) {
 const out = [];
 const tone = { color: C.red, bg: C.warmBg };
 
-// 封面
-const cover = pngSize(path.join(PAPER, "images_v2", "image1.png"));
+// 封面：一整张海报
+const cover = pngSize(path.join(PAPER, "images_v5", "封面.png"));
 out.push(
-  new Paragraph({ spacing: { before: 1400, after: 200 }, alignment: AlignmentType.CENTER,
-    children: [new TextRun({ text: "市 场 周 期 方 法 论", font: HEI, size: 21, color: C.gold })] }),
-  new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 120 },
-    children: [new TextRun({ text: "冬至理论", font: HEI, size: 64, color: C.blue })] }),
-  new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 80 },
-    children: [new TextRun({ text: "——一个关于市场冷热循环的十二阶段模型", font: BODY, size: 27, color: C.ink })] }),
-  new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 300 },
-    children: [new TextRun({ text: "市场只有一个方向：做对", font: HEI, size: 21, color: C.gray })] }),
-  new Paragraph({ alignment: AlignmentType.CENTER, children: [new ImageRun({ type: "png", data: cover.data,
-    transformation: { width: 330, height: Math.round(330 * cover.h / cover.w) } })] }),
-  new Paragraph({ alignment: AlignmentType.CENTER, spacing: { before: 500, after: 80 },
-    children: [new TextRun({ text: "JustinTang洛辰", font: BODY, size: 27, color: C.ink })] }),
-  new Paragraph({ alignment: AlignmentType.CENTER,
-    children: [new TextRun({ text: "二〇二六年十一月", font: BODY, size: 19, color: C.gray })] }),
+  new Paragraph({ alignment: AlignmentType.CENTER, spacing: { before: 0, after: 0 },
+    children: [new ImageRun({ type: "png", data: cover.data,
+      transformation: { width: 580, height: Math.round(580 * cover.h / cover.w) } })] }),
   new Paragraph({ children: [new PageBreak()] }),
 );
 
@@ -216,8 +204,8 @@ const doc = new Document({
     alignment: AlignmentType.LEFT, style: { paragraph: { indent: { left: 640, hanging: 280 } } } }] }] },
   sections: [{
     properties: { page: { size: { width: 11906, height: 16838 },
-      margin: { top: 1531, right: 1587, bottom: 1417, left: 1587, header: 720, footer: 720 } } },
-    footers: { default: new Footer({ children: [new Paragraph({ alignment: AlignmentType.CENTER, children: [
+      margin: { top: 1531, right: 1587, bottom: 1417, left: 1587, header: 720, footer: 720 } }, titlePage: true },
+    footers: { first: new Footer({ children: [new Paragraph({ children: [] })] }), default: new Footer({ children: [new Paragraph({ alignment: AlignmentType.CENTER, children: [
       new TextRun({ text: "— ", size: 18, color: C.gray }), new TextRun({ children: [PageNumber.CURRENT], size: 18, color: C.gray }),
       new TextRun({ text: " —", size: 18, color: C.gray })] })] }) },
     children: out,
