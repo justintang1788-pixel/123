@@ -52,6 +52,7 @@ for line in tpl.split("\n"):
         txt = txt.split("\n", 1)[1].strip("\n")   # 去掉标题
         for a, b in CASE_FIX:
             assert a in txt, a[:20]; txt = txt.replace(a, b)
+        txt = txt.replace("可以对照前面的图4，", "可以对照前面的图5，")   # 价格走势图现在是图5
         out.append(txt)
     elif line.strip() == "@appendix-real-from-v3":
         txt = section("附录三　一轮真实的行情").replace("# 附录三", "# 附录二").rstrip("\n")
