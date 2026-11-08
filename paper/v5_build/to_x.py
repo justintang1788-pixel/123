@@ -119,7 +119,9 @@ def join(lines):
 
 
 full = join(sum(sections, []) + ["", COPY])
-(OUT / "冬至理论_X文章版（全文）.txt").write_text(full, encoding="utf-8")
+pass
+# X 文章有单独的标题栏，正文去掉第一行“冬至理论”
+(OUT / "冬至理论_X文章正文（标题另填）.txt").write_text(full.split("\n", 1)[1].lstrip(), encoding="utf-8")
 
 
 # ---------------------------------------------------------------- 分篇长帖：节太长的再按二级标题拆开，然后装箱

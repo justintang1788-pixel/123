@@ -473,3 +473,40 @@ def heat():
 if __name__ == "__main__":
     cover(); sun_temp(); forces_grid(); wheel(); circles(); path_fig()
     step_zero(); news(); steps(); quadrant(); heat()
+
+
+# ---------------------------------------------------------------- X 用图：文章封面（5:2）和帖子配图（4:5）
+def x_header():
+    fig, ax, H = canvas(10, 4, D_BG)
+    ax.add_patch(Rectangle((0, 0), 100, H, fc=D_BG, ec="none", zorder=0))
+    T(ax, 5, H - 6, "市 场 周 期 方 法 论", 9, "r", D_MUTED, va="center")
+    T(ax, 4.6, H - 15.5, "冬至理论", 54, "s", D_CREAM, va="center")
+    T(ax, 5, H - 26.5, "冬里藏春", 24, "s", D_GOLD, va="center")
+    T(ax, 22.5, H - 26.5, "夏里藏秋", 24, "s", D_BLUE, va="center")
+    T(ax, 5, 7.5, "用十二个阶段看清行情走到了哪里", 11, "r", D_TXT, va="center")
+    T(ax, 5, 3.2, "JustinTang洛辰", 10, "r", D_MUTED, va="center")
+    peak, bot = draw_path(ax, 45, 4.5, 0.53, 0.33, dark=True, label=9, dot=1.4)
+    pill(ax, 49, 2.0, "冬至 · 最冷", D_BLUE, 8, fc=D_BG)
+    ax.plot([peak[0] - 10, peak[0] - 0.6], [peak[1] - 0.3, peak[1] - 0.3], color=D_GOLD, lw=0.8, ls=":", zorder=2)
+    pill(ax, peak[0] - 15, peak[1] - 0.3, "夏至 · 最热", D_GOLD, 8, fc=D_BG)
+    save(fig, "X文章封面_5比2.png", D_BG)
+
+
+def x_post():
+    fig, ax, H = canvas(8, 10, D_BG)
+    ax.add_patch(Rectangle((0, 0), 100, H, fc=D_BG, ec="none", zorder=0))
+    L = 9
+    T(ax, L, H - 9, "市 场 周 期 方 法 论", 11, "r", D_MUTED, va="center")
+    T(ax, L - 0.8, H - 21, "冬至理论", 70, "s", D_CREAM, va="center")
+    T(ax, L, H - 33, "用十二个阶段看清行情走到了哪里", 15, "r", D_TXT, va="center")
+    T(ax, L - 0.4, H - 45, "冬里藏春", 32, "s", D_GOLD, va="center")
+    T(ax, L + 33, H - 45, "夏里藏秋", 32, "s", D_BLUE, va="center")
+    T(ax, L, H - 53.5, "事先变，人后觉。", 13, "r", D_TXT, va="center")
+    peak, bot = draw_path(ax, L, 14, 0.83, 0.4, dark=True, label=11, dot=1.9)
+    ax.plot([L, 100 - L], [15.5, 15.5], color=D_LINE, lw=0.8, zorder=1)
+    pill(ax, L + 7, 11.2, "冬至 · 最冷", D_BLUE, 10, fc=D_BG)
+    ax.plot([peak[0] - 12.5, peak[0] - 0.8], [peak[1] - 0.4, peak[1] - 0.4], color=D_GOLD, lw=0.8, ls=":", zorder=2)
+    pill(ax, peak[0] - 19.5, peak[1] - 0.4, "夏至 · 最热", D_GOLD, 10, fc=D_BG)
+    T(ax, L, 4.5, "JustinTang洛辰", 11, "r", D_MUTED, va="center")
+    T(ax, 100 - L, 4.5, "市场只有一个方向：做对", 11, "r", D_MUTED, va="center", ha="right")
+    save(fig, "X帖子配图_4比5.png", D_BG)
